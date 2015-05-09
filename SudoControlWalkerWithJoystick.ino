@@ -44,11 +44,12 @@ String lastCommand;
 
 
 
-
+int numberOfSteps = 4;
 String steps[] = {"#1P1541#2P1579#3P1192#4P1119#5P1582#6P1149#7P1227#8P1547T250",
                   "#1P1541#2P1079#3P1192#4P1619#5P1582#6P1649#7P1227#8P1047T250",
                   "#1P1191#2P1079#3P1542#4P1619#5P1232#6P1649#7P1577#8P1047T250",
                   "#1P1191#2P1579#3P1542#4P1119#5P1232#6P1149#7P1577#8P1547T250"}; 
+ 
 
 void setup() {    
   pinMode(forwardPin, INPUT);  
@@ -60,7 +61,7 @@ void setup() {
   Serial.begin(115200);// COM7 USB
   Serial1.begin(9600);// USC32 Servo Control Board
   
-  Serial.println("MilliWalker v2 Started");
+  Serial.println("MilliWalker with Joystick started");
 
   delay(3000);
 }
@@ -123,7 +124,7 @@ void loop() {
 
 
 void incrementSteps(){
-  if(currentStep<3){
+  if(currentStep<(numberOfSteps - 1)){
     currentStep++;
   }else{
     currentStep = 0;
@@ -134,13 +135,24 @@ void decrementSteps(){
   if(currentStep>0){
     currentStep--;
   }else{
-    currentStep = 3;
+    currentStep = (numberOfSteps - 1);
   }
 }
 
 void SendCommand(String command){
   Serial1.println(command);
   Serial.println(command);
+}
+
+void SendCommandWithSpeed(String command, int moveSpeed){
+  Serial1.print(command); 
+  Serial1.print("T");    
+  Serial1.println(moveSpeed);
+  
+  
+  Serial.print(command);
+  Serial.print("T");  
+  Serial.println(moveSpeed);
 }
 
 void SendServoCommandList(int servo0,int servo1,int servo2,int servo3,int servo4,int servo5,int servo6,int servo7,int time_delay){
@@ -185,8 +197,14 @@ void SendServoCommandList(int servo0,int servo1,int servo2,int servo3,int servo4
   Serial.print("T");
   Serial.println(time_delay);
 
-  delay(time_delay); 
+  //delay(time_delay); 
 }
+
+
+
+
+
+
 
 void SendServoCommand(int pot_angle, int pot_angle2, int time_delay){
   //first segment responding to potentiometers
@@ -245,4 +263,28 @@ void SendServoCommand(int pot_angle, int pot_angle2, int time_delay){
 
   delay(time_delay); 
 }
+
+
+
+int GetServoValueFromServoNumberAndStep(int legStep, int servo){
+  /*
+FORWARD DIRECTION, max speed ~180
+
+//send 4 step movements
+//forward walking, 4 steps  
+//                       elbo   leg    elbo   leg    elbo   leg    elbo   leg
+SendServoCommandList("#1P1541#2P1579#3P1192#4P1119#5P1582#6P1149#7P1227#8P1547T250");//step 1
+SendServoCommandList("#1P1541#2P1079#3P1192#4P1619#5P1582#6P1649#7P1227#8P1047T250");//step 2
+SendServoCommandList("#1P1191#2P1079#3P1542#4P1619#5P1232#6P1649#7P1577#8P1047T250");//step 3
+SendServoCommandList("#1P1191#2P1579#3P1542#4P1119#5P1232#6P1149#7P1577#8P1547T250");//step 4
+
+0-1024 pot values
+530-2340 max servo values
+
+*/
+  return 0;
+
+  
+}
+
 
